@@ -17,7 +17,7 @@ public class Semaforo extends Thread {
                     System.out.println("Rojo");
                     //sleep(500); // Dormir por .5 segundos
                     System.err.println(getName() + " Finalizado.");
-                    controladorCompartido.liberar(true);
+                    controladorCompartido.liberar();
                     break;
                 }
             }

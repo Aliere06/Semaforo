@@ -5,8 +5,8 @@ public class ControladorSemaforos {
         return disponible;
     }
 
-    public synchronized void liberar(boolean disponible) {
-        this.disponible = disponible;
+    public synchronized void liberar() {
+        disponible = true;
     }
 
     public synchronized boolean solicitarDisponible() {
