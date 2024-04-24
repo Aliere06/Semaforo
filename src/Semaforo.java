@@ -1,14 +1,26 @@
-public class Semaforo extends Thread {
-    private ControladorSemaforos controladorCompartido; // Referencia a objeto compartido
+//C. SEMÁFORO
+/* Clase semáforo que se puede ejecutar en un proceso independiente, la clase tiene como
+ * atributo el objeto controlador que se utiliza para sincronizar multiples instacias de
+ * esta clase.*/
+public class Semaforo extends Thread { //Para poderse ejecutar en otro hilo se extiende la clase thread
+    private ControladorSemaforos controladorCompartido; // Referencia al controlador compartido
 
+    //CONSTRUCTOR
     public Semaforo(ControladorSemaforos controladorCompartido, String nombre) {
         super(nombre);
         this.controladorCompartido = controladorCompartido;
     }
 
+    //M. RUN
+    /* Método run de la clase Thread que se ejecuta por defecto cuando se crea el hilo.
+     * Se sobreescribe con la funcionalidad que deseamos que tenga nuestra clase.*/
+    @Override
     public void run() {
-        try {
-            while (true) {
+        try { //Bloque "try-catch" para manejar excepciones de interrupción del hilo.
+            while (true) { //Ciclo constante para verificar si el controlador está disponible.
+
+                /* Bloque "if" que solo se ejecuta si el hilo es capaz de reclamar la
+                 * disponibilidad del controlador.*/
                 if (controladorCompartido.solicitarDisponible()) {
                     System.out.println("Verde");
                     sleep(2000); // Dormir por 2 segundos
@@ -17,8 +29,11 @@ public class Semaforo extends Thread {
                     System.out.println("Rojo");
                     //sleep(500); // Dormir por .5 segundos
                     System.err.println(getName() + " Finalizado.");
+
+                    /* Llamada para liberar el controlador al finalizar la ejecución de 
+                     * la funcionalidad de la clase.*/
                     controladorCompartido.liberar();
-                    break;
+                    break; // Salir del ciclo
                 }
             }
         } catch (InterruptedException e) {
