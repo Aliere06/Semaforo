@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "PruebasDibujo",
+            "request": "launch",
+            "mainClass": "PruebasDibujo",
+            "projectName": "Semaforo_8587a501"
+        },
+        {
+            "type": "java",
+            "name": "PruebaSemaforo",
+            "request": "launch",
+            "mainClass": "PruebaSemaforo",
+            "projectName": "Semaforo_8587a501"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}",

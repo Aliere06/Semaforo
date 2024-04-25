@@ -7,8 +7,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import java.awt.Color;
+import java.awt.Container;
+import java.awt.Graphics;
 import java.awt.GridLayout;
-import java.awt.Label;
 
 public class Semaforo extends Thread { //Para poderse ejecutar en otro hilo se extiende la clase thread
     private ControladorSemaforos controladorCompartido; // Referencia al controlador compartido
@@ -18,12 +19,39 @@ public class Semaforo extends Thread { //Para poderse ejecutar en otro hilo se e
     public Semaforo(ControladorSemaforos controladorCompartido, String nombre) {
         super(nombre);
         this.controladorCompartido = controladorCompartido;
-        JPanel panel = new JPanel(new GridLayout(3, 0));
+        Container panel = ventana.getContentPane();
+        panel.setLayout(new GridLayout(3, 0));
         panel.setBackground(Color.DARK_GRAY);
-        panel.add(new Label("1"));
-        panel.add(new Label("2"));
-        panel.add(new Label("3"));
-        ventana.setSize(200, 300);
+        panel.add(new JPanel(){
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                this.setBackground(ventana.getContentPane().getBackground());
+                g.setColor(Color.GREEN);
+                g.fillOval((int)(getWidth()*.05), (int)(getHeight()*.05), (int)(getWidth()*.9), (int)(getHeight()*.9));
+            }
+        });
+        panel.add(new JPanel(){
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                this.setBackground(ventana.getContentPane().getBackground());
+                g.setColor(Color.YELLOW);
+                g.fillOval((int)(getWidth()*.05), (int)(getHeight()*.05), (int)(getWidth()*.9), (int)(getHeight()*.9));
+            }
+        });
+        panel.add(new JPanel(){
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                this.setBackground(ventana.getContentPane().getBackground());
+                g.setColor(Color.RED);
+                g.fillOval((int)(getWidth()*.05), (int)(getHeight()*.05), (int)(getWidth()*.9), (int)(getHeight()*.9));
+            }
+        });
+        ventana.setSize(200, 600);
+        ventana.setResizable(false);
+        ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         ventana.setContentPane(panel);
         ventana.setVisible(true);
     }

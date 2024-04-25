@@ -1,7 +1,7 @@
-public class Semaforo extends Thread {
+public class Semaforo2 extends Thread {
     private Object ObjetoDeControl; // Referencia a objeto compartido
 
-    public Semaforo(Object ObjetoDeControl, String nombre) {
+    public Semaforo2(Object ObjetoDeControl, String nombre) {
         super(nombre);
         this.ObjetoDeControl = ObjetoDeControl;
     }
