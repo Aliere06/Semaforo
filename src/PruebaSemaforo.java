@@ -5,9 +5,9 @@ public class PruebaSemaforo {
         ControladorSemaforos controladorCompartido = new ControladorSemaforos();
 
         //Semáforos que utilizan el mismo controlador
-        Semaforo s1 = new Semaforo(controladorCompartido, "Semaforo 1");
-        Semaforo s2 = new Semaforo(controladorCompartido, "Semaforo 2");
-        Semaforo s3 = new Semaforo(controladorCompartido, "Semaforo 3");
+        Semaforo s1 = new Semaforo(controladorCompartido);
+        Semaforo s2 = new Semaforo(controladorCompartido);
+        Semaforo s3 = new Semaforo(controladorCompartido);
 
         //Ejecución de los semáforos
         //Nota: se llama el método "start" y no "run" para que la ejecución sea concurrente
