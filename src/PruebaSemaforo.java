@@ -14,5 +14,8 @@ public class PruebaSemaforo {
         s1.start();
         s2.start();
         s3.start();
+
+
     }
+
 }

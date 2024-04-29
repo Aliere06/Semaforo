@@ -21,6 +21,7 @@ public class Semaforo extends Thread { //Para poderse ejecutar en otro hilo se e
     private boolean activo = false;
     private Foco focoActivo;
     private int id;
+    int indiceTabla;
 
     public class Foco extends JPanel {
         Color colorEncendido, colorApagado, colorActivo;
@@ -60,10 +61,10 @@ public class Semaforo extends Thread { //Para poderse ejecutar en otro hilo se e
     //CONSTRUCTOR
     public Semaforo(ControladorSemaforos controladorCompartido) {
         this.controladorCompartido = controladorCompartido;
-        controladorCompartido.semáforosAgregados++;
-        id = controladorCompartido.semáforosAgregados;
+        controladorCompartido.agregarSemaforo(this);
+        id = controladorCompartido.getSemaforosAgregados();
         nombre = "Semáforo " + id;
-        ventana = new JFrame(nombre);
+        ventana = new JFrame("S" + id);
         super.setName(nombre);
         
         Container panel = ventana.getContentPane();
@@ -78,7 +79,7 @@ public class Semaforo extends Thread { //Para poderse ejecutar en otro hilo se e
         ventana.setContentPane(panel);
         ventana.setVisible(true);
         
-        focoActivo = focos[2];
+        focos[2].encenderExclusivo();
         controladorCompartido.tabla.agregarFila(getInformación());
     }
 
@@ -121,18 +122,12 @@ public class Semaforo extends Thread { //Para poderse ejecutar en otro hilo se e
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        /* try {
-            controladorCompartido.obtener();
-            System.out.println("Verde");
-            Thread.sleep(2000); // a dormir por 2 segundos
-            System.out.println("Amarillo");
-            Thread.sleep(2000);
-            System.out.println("Rojo");
-            controladorCompartido.devolver();
+    }
 
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
-        } */
+    public void detener() {
+        controladorCompartido.liberar();
+        ventana.dispose();
+        interrupt();
     }
 
     public String[] getInformación() {

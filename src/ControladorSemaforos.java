@@ -10,6 +10,13 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -22,7 +29,8 @@ public class ControladorSemaforos {
     private boolean disponible = true;
     JFrame ventana = new JFrame("Controlador de Semáforos");
     TablaInformación tabla = new TablaInformación();
-    int semáforosAgregados = 0;
+    int semaforosAgregados = 0;
+    ArrayList<Semaforo> semaforos = new ArrayList<>();
 
     public class TablaInformación extends JPanel{
         String[][] celdas = new String[4][6];
@@ -30,7 +38,7 @@ public class ControladorSemaforos {
         String[] cabecera = {"Semáforo", "Estado", "Foco Activo", "Terminar"};
         JPanel[] columnas = new JPanel[4];
         int filasOcupadas;
-        
+
         TablaInformación(){
             setLayout(new FlowLayout(FlowLayout.CENTER,0,0));
             setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 10));
@@ -41,6 +49,7 @@ public class ControladorSemaforos {
                 columnas[i].add(new JLabel(cabecera[i]));
                 add(columnas[i]);
             }
+
         }
 
         public void agregarFila(String[] fila) {
@@ -49,12 +58,31 @@ public class ControladorSemaforos {
                     columnas[i].add(new JLabel(fila[i]));
                 }
                 JPanel xPane = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
-                xPane.add(new JLabel("X"));
+                JLabel xLabel = new JLabel("X");
+
+                xLabel.setForeground(Color.RED); //le declare el color rojo para distinguirlo del resto de la tabla
+                xLabel.addMouseListener(new MouseAdapter() { //EL LISTINER DE CLIC
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        Semaforo semaforo = buscarSemaforo(3, xPane);
+                        int noFila = semaforo.indiceTabla;
+                        semaforo.detener();
+                        eliminarFila(noFila);
+                    }
+                }); //FIN DEL LISTENER
+
+
+                xPane.add(xLabel);
                 columnas[3].add(xPane);
                 filasOcupadas++;
                 getParent().revalidate();
                 getParent().repaint();
             }
+        }
+        public synchronized void eliminarSemaforo(int id) {
+            // Elimina el semáforo con el ID proporcionado de la tabla
+            tabla.eliminarFila(id);
+            // También puedes agregar más lógica para detener o finalizar el hilo del semáforo si es necesario
         }
 
         public void eliminarFila(int indice) {
@@ -83,6 +111,34 @@ public class ControladorSemaforos {
                 repaint();
             }
         }
+
+        public Semaforo buscarSemaforo(int noColumna, Component elementoAsociado) {
+            JPanel columna = columnas[noColumna];
+            List<Component> elementos = Arrays.asList(columna.getComponents());
+
+            JLabel etiquetaSemaforo;
+            int noFila;
+            try {
+                noFila = elementos.indexOf(elementoAsociado);
+                etiquetaSemaforo = (JLabel)columnas[0].getComponent(noFila);
+            } catch (Exception e) {
+                System.out.println("El elemento indicado no existe en la columna o es nulo");
+                e.printStackTrace();
+                return null;
+            }
+            String nombreSemaforo = etiquetaSemaforo.getText();
+            System.out.println("Semáforo en fila: " + nombreSemaforo);
+
+            System.out.println("Buscando semaforos...");
+            for (Semaforo semaforo : semaforos) {
+                System.out.println(semaforo.getName());
+                if (semaforo.getName().equals(nombreSemaforo)) {
+                    semaforo.indiceTabla = noFila;
+                    return semaforo;
+                }
+            }
+            return null;
+        }
     }
 
     ControladorSemaforos(){
@@ -97,28 +153,31 @@ public class ControladorSemaforos {
         titulo.setBackground(Color.GRAY);
         JLabel lblTitulo = new JLabel("Controlador de semáforos");
         JButton btnAgregar = new JButton("Agregar");
+
         titulo.add(lblTitulo, BorderLayout.WEST);
         titulo.add(btnAgregar, BorderLayout.EAST);
 
+        // Agregamos ActionListener al botón "btnAgregar"
+        btnAgregar.addActionListener(new ActionListener() { //LISTENER DE AGREGAR
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Crear un nuevo semáforo y agregarlo al controlador compartido
+                Semaforo nuevoSemaforo = new Semaforo(ControladorSemaforos.this);
+                nuevoSemaforo.start();
+            }
+        });
 
-        /* JPanel tabla = new JPanel(new FlowLayout());
-        tabla.setBorder(new EmptyBorder(10, 10, 10, 10));
-        JPanel columna1 = new JPanel(new GridLayout(6, 1));
-        columna1.add(new JLabel("Semáforo"));
-        tabla.add(columna1);
-        JPanel columna2 = new JPanel(new GridLayout(6, 1));
-        columna2.add(new JLabel("Estado"));
-        tabla.add(columna2);
-        JPanel columna3 = new JPanel(new GridLayout(6, 1));
-        columna3.add(new JLabel("Foco Activo"));
-        tabla.add(columna3);
-        JPanel columna4 = new JPanel(new GridLayout(6, 1));
-        columna4.add(new JLabel("Terminar"));
-        tabla.add(columna4); */
+        titulo.add(lblTitulo, BorderLayout.WEST);
+        titulo.add(btnAgregar, BorderLayout.EAST);
 
         contenedor.add(titulo, BorderLayout.NORTH);
         contenedor.add(tabla, BorderLayout.CENTER);
         ventana.setVisible(true);
+    }
+
+    //M. GET
+    public int getSemaforosAgregados() {
+        return semaforosAgregados;
     }
 
     //M. ESTÁ DISPONIBLE
@@ -152,6 +211,10 @@ public class ControladorSemaforos {
         }
     }
 
+    public void agregarSemaforo(Semaforo semaforo) {
+        semaforos.add(semaforo);
+        semaforosAgregados++;
+    }
 
     //M. DESCONTINUADOS
     /* public synchronized void devolver() {
