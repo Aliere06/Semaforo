@@ -125,8 +125,8 @@ public class Semaforo extends Thread { //Para poderse ejecutar en otro hilo se e
     }
 
     public void detener() {
-        controladorCompartido.liberar();
         ventana.dispose();
+        controladorCompartido.liberar();
         interrupt();
     }
 

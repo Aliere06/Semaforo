@@ -46,7 +46,10 @@ public class ControladorSemaforos {
             for (int i=0; i<columnas.length; i++) {
                 columnas[i] = new JPanel(new GridLayout(6,1,0,0));
                 columnas[i].setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-                columnas[i].add(new JLabel(cabecera[i]));
+                JLabel etiquetaEncabezado = new JLabel(cabecera[i]);
+                etiquetaEncabezado.setBackground(Color.BLACK);
+                etiquetaEncabezado.setForeground(Color.WHITE);
+                columnas[i].add(etiquetaEncabezado);
                 add(columnas[i]);
             }
 
